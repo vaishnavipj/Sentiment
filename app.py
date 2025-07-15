@@ -13,7 +13,10 @@ from sklearn.metrics.pairwise import cosine_similarity
 from io import StringIO
 import plotly.graph_objects as go
 
-nltk.download('punkt', quiet=True)
+try:
+    nltk.data.find("tokenizers/punkt")
+except LookupError:
+    nltk.download("punkt")
 
 # === OpenAI Key ===
 openai.api_key = st.secrets["openai"]["api_key"]
