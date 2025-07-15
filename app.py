@@ -21,9 +21,6 @@ def ensure_punkt_tokenizer():
     from nltk.tokenize import PunktSentenceTokenizer
     return PunktSentenceTokenizer()
 
-tokenizer = ensure_punkt_tokenizer()
-sentences = tokenizer.tokenize(text)
-
 # === OpenAI Key ===
 openai.api_key = st.secrets["openai"]["api_key"]
 
@@ -111,9 +108,11 @@ def main():
     if uploaded:
         text = extract_text(uploaded)
         st.success("✅ File Uploaded & Extracted")
+        sentence_tokenizer = ensure_punkt_tokenizer()
+        sentences = sentence_tokenizer.tokenize(text)
         personas = load_personas()
-        tokenizer, model = load_finbert()
-        sentences = sent_tokenize(text)
+        finbert_tokenizer, model = load_finbert()
+     
 
         tab1, tab2, tab3 = st.tabs(["🧠 Investor Sentiment", "📋 Compliance Check", "🔁 Redundancy"])
 
@@ -134,7 +133,7 @@ def main():
                         pos, neg, neu = 0, 0, 0
                         for sent in sentences[:10]:
                             llm = get_llm_sentiment(persona, sent)
-                            finbert = get_finbert_sentiment(sent, tokenizer, model)
+                            finbert = get_finbert_sentiment(sent, finbert_tokenizer, model)
                             risk = calculate_risk(finbert, llm)
                             sentiment = "positive" if "positive" in llm.lower() else "negative" if "negative" in llm.lower() else "neutral"
                             if sentiment == "positive": pos += 1
