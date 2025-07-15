@@ -6,7 +6,6 @@ import openai
 import json
 import docx
 import nltk
-from nltk.tokenize import sent_tokenize
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
 from sklearn.metrics.pairwise import cosine_similarity
@@ -14,14 +13,16 @@ from io import StringIO
 import plotly.graph_objects as go
 
 @st.cache_resource
-def ensure_punkt():
+def ensure_punkt_tokenizer():
     try:
         nltk.data.find("tokenizers/punkt")
     except LookupError:
         nltk.download("punkt")
-    return True
+    from nltk.tokenize import PunktSentenceTokenizer
+    return PunktSentenceTokenizer()
 
-ensure_punkt()
+tokenizer = ensure_punkt_tokenizer()
+sentences = tokenizer.tokenize(text)
 
 # === OpenAI Key ===
 openai.api_key = st.secrets["openai"]["api_key"]
