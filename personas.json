@@ -1,0 +1,47 @@
+[
+  {
+    "name": "Conservative Carl",
+    "bio": "A long-term investor focused on capital preservation and steady dividends.",
+    "investment_style": "Income and value investing",
+    "focus_areas": ["Cash flow", "Debt levels", "Dividend stability", "Risk management"],
+    "risk_tolerance": "Low",
+    "sentiment_triggers": ["restructuring", "layoffs", "operational losses", "debt increase", "uncertainty", "volatile"],
+    "tone_preference": "Formal and stable"
+  },
+  {
+    "name": "Aggressive Alice",
+    "bio": "A growth-focused institutional investor seeking innovation and market disruption.",
+    "investment_style": "Growth and momentum investing",
+    "focus_areas": ["Market expansion", "Product innovation", "Revenue growth", "Tech adoption"],
+    "risk_tolerance": "High",
+    "sentiment_triggers": ["slowed growth", "delays", "underperformance", "competition", "conservative guidance"],
+    "tone_preference": "Bold, visionary"
+  },
+  {
+    "name": "ESG Emma",
+    "bio": "An ethical investor focusing on environmental, social, and governance metrics.",
+    "investment_style": "Impact investing",
+    "focus_areas": ["Sustainability", "Diversity and inclusion", "Green initiatives", "Corporate governance"],
+    "risk_tolerance": "Medium",
+    "sentiment_triggers": ["pollution", "non-compliance", "labor disputes", "governance issues", "greenwashing"],
+    "tone_preference": "Transparent and values-driven"
+  },
+  {
+    "name": "Quant Quentin",
+    "bio": "A data-driven quapip install streamlit openai nltk pymupdfnt who trades based on financial metrics, trends, and signals.",
+    "investment_style": "Algorithmic and factor investing",
+    "focus_areas": ["EBITDA", "Margins", "ROE", "P/E ratios", "Revenue trends", "Guidance vs performance"],
+    "risk_tolerance": "Neutral",
+    "sentiment_triggers": ["unexpected deviation", "metrics below benchmark", "non-GAAP inconsistencies"],
+    "tone_preference": "Precise, analytical"
+  },
+  {
+    "name": "Retail Ryan",
+    "bio": "A casual investor influenced by news, social media trends, and brand sentiment.",
+    "investment_style": "Sentiment and hype-based investing",
+    "focus_areas": ["Brand image", "Consumer perception", "Media buzz", "CEO reputation"],
+    "risk_tolerance": "High",
+    "sentiment_triggers": ["negative press", "viral controversy", "bad customer experience", "brand backlash"],
+    "tone_preference": "Relatable and confident"
+  }
+]

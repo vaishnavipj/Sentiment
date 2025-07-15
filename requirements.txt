@@ -1,0 +1,10 @@
+streamlit==1.35.0
+PyMuPDF==1.22.3
+pandas
+python-docx
+nltk
+transformers==4.40.0
+torch==2.0.1+cpu
+scikit-learn
+plotly
+openai
