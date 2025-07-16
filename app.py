@@ -142,7 +142,7 @@ def calculate_risk(finbert, llm):
 
 # === Main App ===
 def main():
-        st.markdown("<div class='main-title'>📑 Unified Sentiment Analysis - Brand Name</div>", unsafe_allow_html=True)
+    st.markdown("<div class='main-title'>📑 Unified Sentiment Analysis - Brand Name</div>", unsafe_allow_html=True)
     uploaded = st.file_uploader("📤 Upload Annual Report (PDF/DOCX/TXT)", type=["pdf", "docx", "txt"])
 
     if uploaded:
