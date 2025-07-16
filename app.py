@@ -109,7 +109,7 @@ def get_llm_sentiment(persona, sentence, finbert_scores):
         response = openai.chat.completions.create(
             model="gpt-4o",
             messages=[{"role": "user", "content": prompt}],
-            temperature=0.5,
+            temperature=0.3,
             max_tokens=600
         )
         raw = response.choices[0].message.content
@@ -189,7 +189,7 @@ def main():
                                 with st.expander(f"💬 Sentence Review – {persona['name']}"):
                                     st.markdown(f"**📝 Sentence:** {sent}")
 
-                                    st.markdown("**📊 Tone Probability Breakdown (FinBERT):**")
+                                    st.markdown(f"**📊 Risk Probability for {persona['name']}:**")
                                     finbert_df = pd.DataFrame([finbert]).T.rename(columns={0: "Probability"})
                                     finbert_df["Probability"] = (finbert_df["Probability"] * 100).round(2).astype(str) + " %"
                                     st.dataframe(finbert_df, use_container_width=True)
@@ -197,7 +197,7 @@ def main():
                                     st.markdown("🧠 <strong>Persona’s Interpretation:</strong>", unsafe_allow_html=True)
                                     st.markdown(f"<div class='sub-section'>{llm_result.get('viewpoint', 'N/A')}</div>", unsafe_allow_html=True)
 
-                                    st.markdown(f"⚠️ <strong>Risk Level as seen by {persona['name']}:</strong> `{risk_level}`", unsafe_allow_html=True)
+                                    # st.markdown(f"⚠️ <strong>Risk Level as seen by {persona['name']}:</strong> `{risk_level}`", unsafe_allow_html=True)
 
                                     st.markdown("📌 <strong>Why this matters to the persona:</strong>", unsafe_allow_html=True)
                                     st.info(llm_result.get("rationale", "No rationale provided."))
