@@ -142,7 +142,7 @@ def main():
 
                             if show_all or risk >= 0.4:
                                 with st.expander(f"💬 Sentence: {sent[:80]}..."):
-                                    st.markdown(f"**🧠 LLM Sentiment:** {llm}")
+                                    st.markdown(f"**🧠 Sentiment:** {llm}")
                                     st.markdown(f"**📊 FinBERT:** `{finbert}`")
                                     st.markdown(f"**🔺 Risk Score:** `{risk}`")
 
