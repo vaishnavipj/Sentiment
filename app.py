@@ -292,6 +292,72 @@ Text:
                                     yaxis=dict(range=[0, 100])
                                 )
                                 st.plotly_chart(fig, use_container_width=True)
+            with subtab3:
+                if st.button("🧠 Generate Overall Investor Summary"):
+                    with st.spinner("Analyzing investor personas and generating executive summary..."):
+                        try:
+                            persona_summary = "\n".join([
+                                f"Persona: {p['name']}\nTone: {p['tone_preference']}\nFocus: {', '.join(p['focus_areas'])}\nBio: {p['bio']}\nTriggers: {', '.join(p['sentiment_triggers'])}" for p in personas
+                            ])
+
+                            summary_prompt = f"""
+You are an expert analyst generating an executive-level investor sentiment report.
+
+**TASK**: Based on the uploaded annual report and the investor persona profiles:
+1. Extract a rich overview of tone, sentiment, and risk.
+2. Provide insights relevant to institutional, retail, ESG, and activist investors.
+
+### Required Output Format (Markdown Table + Highlights)
+
+#### Pages Analyzed
+(Detect range based on input length. Use 1–N if unknown)
+
+#### 📈 Overall Sentiment
+- Sentiment Score (numeric)
+- Tone: e.g., Visionary, Risk-Averse, ESG-Forward, Tech-Focused
+
+#### 🎯 Narrative Tone
+- Bullet points of tone descriptors
+
+#### ⚠️ Material Gaps Identified
+| Statement | Risk Category | Severity Flag |
+|-----------|----------------|----------------|
+
+#### 👥 Persona-Based Summary Table
+| Persona | Sentiment Score | Emotional Triggers | Risk Flags | Tone Fit | Suggested Narrative Adjustment |
+|---------|------------------|--------------------|------------|----------|-------------------------------|
+
+#### 📊 Sentiment by Section Table
+| Section | Sentiment Tone | Keywords Triggering Emotion | Persona Impact |
+|---------|----------------|-----------------------------|----------------|
+
+#### 💡 Recommendations Table
+| Persona | Addition to Improve Sentiment | Why It Matters |
+|---------|-------------------------------|----------------|
+
+#### 📌 Final Summary
+- Strengths (✔)
+- Gaps (❌)
+- Persona Confidence Level: High/Med/Low
+
+Generate this exactly in Markdown using the report text below.
+
+---
+{text[:7000]}
+---
+
+Persona Profiles:
+{persona_summary}
+"""
+                            response = openai.chat.completions.create(
+                                model="gpt-4o",
+                                messages=[{"role": "user", "content": summary_prompt}],
+                                temperature=0.3,
+                                max_tokens=3200
+                            )
+                            st.markdown(response.choices[0].message.content)
+                        except Exception as e:
+                            st.error(f"❌ Error generating executive summary: {str(e)}")                    
 
                 # --- Tab 2: Compliance Check ---
         with tab2:
