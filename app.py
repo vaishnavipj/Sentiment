@@ -74,7 +74,22 @@ def extract_text(uploaded_file):
 
 # === Sentiment Functions ===
 def generate_prompt(persona, sentence):
-    return f"You are {persona['name']} ({persona['bio']}).\nEvaluate: \"{sentence}\""
+    return f"""
+You are {persona['name']}, an investor with the following focus areas: {', '.join(persona['focus_areas'])}.
+
+Evaluate the following sentence from a company’s annual report:
+\"\"\"{sentence}\"\"\"
+
+Return your analysis in this **JSON** format:
+
+{{
+  "viewpoint": "Your perspective as an investor, including interpretation, concerns, or positive takeaways.",
+  "risk_level": "High / Medium / Low",
+  "rationale": "Why you rated it as this risk level, in simple language."
+}}
+
+Only return the JSON. Do not explain what you're doing.
+"""
 
 def get_llm_sentiment(persona, sentence):
     try:
@@ -82,11 +97,13 @@ def get_llm_sentiment(persona, sentence):
             model="gpt-4o",
             messages=[{"role": "user", "content": generate_prompt(persona, sentence)}],
             temperature=0.4,
-            max_tokens=300
+            max_tokens=400
         )
-        return response.choices[0].message.content
+        raw = response.choices[0].message.content
+        match = re.search(r"\{.*\}", raw, re.DOTALL)
+        return json.loads(match.group(0)) if match else {"viewpoint": "", "risk_level": "Medium", "rationale": "Could not parse."}
     except Exception as e:
-        return f"Error: {e}"
+        return {"viewpoint": "Error generating response", "risk_level": "Medium", "rationale": str(e)}
 
 def get_finbert_sentiment(text, tokenizer, model):
     inputs = tokenizer(text, return_tensors="pt", truncation=True, max_length=512)
@@ -117,6 +134,7 @@ def main():
         tab1, tab2, tab3 = st.tabs(["🧠 Investor Sentiment", "📋 Compliance Check", "🔁 Redundancy"])
 
         # --- Tab 1: Investor Sentiment ---
+                # === Tab 1: Investor Sentiment ===
         with tab1:
             st.markdown("<div class='sub-section'>Sentiment analysis from investor personas</div>", unsafe_allow_html=True)
             selected = st.multiselect("🎯 Select Personas", [p['name'] for p in personas], default=[p['name'] for p in personas])
@@ -130,32 +148,57 @@ def main():
                     progress = st.progress(0.0)
                     for i, persona in enumerate(selected_personas):
                         st.markdown(f"<div class='highlight'>👤 {persona['name']} | Focus: {', '.join(persona['focus_areas'])}</div>", unsafe_allow_html=True)
-                        pos, neg, neu = 0, 0, 0
+                        low, med, high = 0, 0, 0
+
                         for sent in sentences[:10]:
-                            llm = get_llm_sentiment(persona, sent)
+                            # Get GPT analysis and FinBERT sentiment
+                            llm_result = get_llm_sentiment(persona, sent)
                             finbert = get_finbert_sentiment(sent, finbert_tokenizer, model)
-                            risk = calculate_risk(finbert, llm)
-                            sentiment = "positive" if "positive" in llm.lower() else "negative" if "negative" in llm.lower() else "neutral"
-                            if sentiment == "positive": pos += 1
-                            elif sentiment == "negative": neg += 1
-                            else: neu += 1
 
-                            if show_all or risk >= 0.4:
-                                with st.expander(f"💬 Sentence: {sent[:80]}..."):
-                                    st.markdown(f"**🧠 Sentiment:** {llm}")
-                                    st.markdown(f"**📊 FinBERT:** `{finbert}`")
-                                    st.markdown(f"**🔺 Risk Score:** `{risk}`")
+                            # Count risk levels
+                            risk_level = llm_result.get("risk_level", "Medium").capitalize()
+                            if risk_level == "High":
+                                high += 1
+                            elif risk_level == "Low":
+                                low += 1
+                            else:
+                                med += 1
 
-                        # Show sentiment bar chart
+                            # Show if risky or all selected
+                            if show_all or risk_level in ["High", "Medium"]:
+                                with st.expander(f"💬 Sentence Review – {persona['name']}"):
+                                    # Full sentence
+                                    st.markdown(f"**📝 Sentence:** {sent}")
+
+                                    # FinBERT-like sentiment breakdown
+                                    st.markdown("**📊 Tone Probability Breakdown:**")
+                                    finbert_df = pd.DataFrame([finbert]).T.rename(columns={0: "Probability"})
+                                    finbert_df["Probability"] = (finbert_df["Probability"] * 100).round(2).astype(str) + " %"
+                                    st.dataframe(finbert_df, use_container_width=True)
+
+                                    # Persona Viewpoint
+                                    st.markdown("**🧠 Persona Viewpoint:**")
+                                    st.markdown(f"<div class='sub-section'>{llm_result.get('viewpoint', '')}</div>", unsafe_allow_html=True)
+
+                                    # Risk Level
+                                    st.markdown(f"**⚠️ Risk Level:** `{risk_level}`")
+
+                                    # Rationale
+                                    st.markdown("**📌 Rationale:**")
+                                    st.info(llm_result.get("rationale", "No rationale provided."))
+
+                        # Sentiment Summary Chart
                         chart_df = pd.DataFrame({
-                            "Sentiment": ["Positive", "Neutral", "Negative"],
-                            "Count": [pos, neu, neg]
+                            "Risk Level": ["Low", "Medium", "High"],
+                            "Count": [low, med, high]
                         })
-                        fig = go.Figure(data=[go.Bar(x=chart_df["Sentiment"], y=chart_df["Count"], marker_color=["green", "gray", "red"])])
-                        fig.update_layout(title="📈 Sentiment Overview")
+                        fig = go.Figure(data=[go.Bar(x=chart_df["Risk Level"], y=chart_df["Count"],
+                                                     marker_color=["green", "orange", "red"])])
+                        fig.update_layout(title="📈 Risk Distribution Across Sentences")
                         st.plotly_chart(fig, use_container_width=True)
 
                         progress.progress((i + 1) / len(selected_personas))
+       
                 # --- Tab 2: Compliance Check ---
         with tab2:
             st.markdown("<div class='sub-section'>📋 Compliance report against SEBI & Companies Act</div>", unsafe_allow_html=True)
