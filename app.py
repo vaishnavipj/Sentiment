@@ -102,7 +102,7 @@ def calculate_risk(finbert, llm):
 
 # === MAIN App ===
 def main():
-    st.markdown("<div class='main-title'>📑 Unified Annual Report Analyzer – Investor Edition</div>", unsafe_allow_html=True)
+    st.markdown("<div class='main-title'>📑 Sentiment Analysis - Brand Name</div>", unsafe_allow_html=True)
     uploaded = st.file_uploader("📤 Upload Annual Report (PDF/DOCX/TXT)", type=["pdf", "docx", "txt"])
 
     if uploaded:
@@ -118,7 +118,7 @@ def main():
 
         # --- Tab 1: Investor Sentiment ---
         with tab1:
-            st.markdown("<div class='sub-section'>Sentiment analysis from investor personas using GPT + FinBERT</div>", unsafe_allow_html=True)
+            st.markdown("<div class='sub-section'>Sentiment analysis from investor personas</div>", unsafe_allow_html=True)
             selected = st.multiselect("🎯 Select Personas", [p['name'] for p in personas], default=[p['name'] for p in personas])
             show_all = st.checkbox("Show all sentences (not just risky ones)", value=False)
 
