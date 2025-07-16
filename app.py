@@ -161,7 +161,7 @@ def main():
 
             # === SUBTAB 1: Sentence-Based ===
             with subtab1:
-                st.markdown("<div class='sub-section'>Sentiment analysis - Persona Based</div>", unsafe_allow_html=True)
+                # st.markdown("<div class='sub-section'>Sentiment analysis - Persona Based</div>", unsafe_allow_html=True)
                 selected = st.multiselect("🎯 Select Personas", [p['name'] for p in personas], default=[p['name'] for p in personas])
                 show_all = st.checkbox("Show all sentences (not just risky ones)", value=False)
 
@@ -213,27 +213,44 @@ def main():
                 if st.button("▶️ Run Topic-Based Sentiment Analysis"):
                     with st.spinner("🔍 Extracting topics and analyzing risks..."):
                         try:
+                            persona_insights = "\n".join([
+                                f"Persona: {p['name']}\nTone: {p['tone_preference']}\nFocus: {', '.join(p['focus_areas'])}\nTriggers: {', '.join(p['sentiment_triggers'])}"
+                                for p in personas if p['name'] in selected_personas
+                            ])
                             topic_prompt = f"""
-Given the annual report content below, extract 5–7 distinct strategic or operational topics.
+You are a financial analyst helping investor personas interpret an annual report.
 
-For each topic, return:
-- "topic": Title of the topic
-- "summary": What this topic is about
-- "focus_area": One word: Profitability, Risk, Growth, Governance, Compliance, Innovation, etc.
-- "top_sentences": 3 most critical sentences that reflect risk or performance concerns
+1. Read the following annual report text.
+2. Extract 8–12 clear, distinct strategic or operational topics from the report.
+3. For each topic, return:
+   - "topic": Clear, specific title (avoid generic headings)
+   - "summary": 2–3 sentence summary tailored to investor interest
+   - focus_area": Choose the best fit from the following:
+     ['Profitability', 'Risk', 'Growth', 'Compliance', 'Governance', 'Innovation', 'Sustainability', 'Liquidity', 'Leverage', 'Operational Efficiency', 'Customer Acquisition', 'Digital Transformation', 'Market Share', 'Regulatory Outlook', 'Capital Allocation', 'Human Capital']
+   - "top_sentences": 5 important lines that carry high tone or disclosure weight
 
-Only return a JSON array with the format:
+Incorporate context from these selected investor personas:
+{persona_insights}
+
+Ensure the focus_area clearly reflects what matters most to investors.
+Only respond in the following JSON format:
 [
-  {{"topic": "...", "summary": "...", "focus_area": "...", "top_sentences": ["...", "...", "..."]}},
-  ...
+  {{
+    "topic": "...",
+    "summary": "...",
+    "focus_area": "...",
+    "top_sentences": ["...", "...", "...", "...", "..."]
+  }}, ...
 ]
-Text: \n{text[:4000]}
+
+Text:
+{text[:6500]}
 """
                             response = openai.chat.completions.create(
                                 model="gpt-4o",
                                 messages=[{"role": "user", "content": topic_prompt}],
                                 temperature=0.3,
-                                max_tokens=1200
+                                max_tokens=1600
                             )
                             topic_json = json.loads(re.search(r"\[.*\]", response.choices[0].message.content, re.DOTALL).group(0))
                         except Exception as e:
