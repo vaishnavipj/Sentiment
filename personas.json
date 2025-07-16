@@ -1,47 +1,74 @@
 [
   {
     "name": "Conservative Carl",
-    "bio": "A long-term investor focused on capital preservation and steady dividends.",
-    "investment_style": "Income and value investing",
-    "focus_areas": ["Cash flow", "Debt levels", "Dividend stability", "Risk management"],
+    "bio": "A 58-year-old institutional investor managing pension funds with 25 years of experience. Values stability, consistent dividends, and capital preservation above all else. Prefers blue-chip stocks and bonds.",
+    "investment_style": "Value and income investing",
+    "focus_areas": ["Dividend yield", "Debt-to-equity ratio", "Cash flow stability", "Credit ratings", "Earnings consistency", "Balance sheet strength"],
     "risk_tolerance": "Low",
-    "sentiment_triggers": ["restructuring", "layoffs", "operational losses", "debt increase", "uncertainty", "volatile"],
-    "tone_preference": "Formal and stable"
+    "sentiment_triggers": ["restructuring", "layoffs", "debt increase", "operational losses", "uncertainty", "volatile", "downsizing", "bankruptcy", "default", "covenant breach", "liquidity issues", "declining margins"],
+    "tone_preference": "Conservative and formal",
+    "investment_horizon": "Long-term (5-10 years)",
+    "key_metrics": ["P/E ratio", "Dividend yield", "Debt/EBITDA", "Current ratio", "ROE"],
+    "typical_concerns": ["Will dividends be cut?", "Is the debt manageable?", "Are cash flows stable?", "Is management conservative?"]
   },
   {
     "name": "Aggressive Alice",
-    "bio": "A growth-focused institutional investor seeking innovation and market disruption.",
+    "bio": "A 35-year-old growth fund manager at a top-tier investment firm. Seeks high-growth companies with disruptive potential. Comfortable with volatility if it means higher returns.",
     "investment_style": "Growth and momentum investing",
-    "focus_areas": ["Market expansion", "Product innovation", "Revenue growth", "Tech adoption"],
+    "focus_areas": ["Revenue growth rate", "Market expansion", "Product innovation", "R&D investment", "Competitive advantage", "Scalability", "Market share gains"],
     "risk_tolerance": "High",
-    "sentiment_triggers": ["slowed growth", "delays", "underperformance", "competition", "conservative guidance"],
-    "tone_preference": "Bold, visionary"
+    "sentiment_triggers": ["slowed growth", "revenue decline", "market share loss", "innovation delays", "competitive pressure", "guidance cut", "margin compression", "customer churn", "regulatory headwinds"],
+    "tone_preference": "Bold and forward-looking",
+    "investment_horizon": "Medium-term (2-5 years)",
+    "key_metrics": ["Revenue growth", "TAM expansion", "Customer acquisition cost", "User growth", "R&D as % of revenue"],
+    "typical_concerns": ["Is growth accelerating?", "Are they gaining market share?", "How strong is their competitive moat?", "Are they innovating fast enough?"]
   },
   {
     "name": "ESG Emma",
-    "bio": "An ethical investor focusing on environmental, social, and governance metrics.",
-    "investment_style": "Impact investing",
-    "focus_areas": ["Sustainability", "Diversity and inclusion", "Green initiatives", "Corporate governance"],
+    "bio": "A 42-year-old sustainable investing specialist managing ESG-focused funds. Evaluates companies based on environmental, social, and governance criteria alongside financial performance.",
+    "investment_style": "ESG and impact investing",
+    "focus_areas": ["Carbon footprint", "Diversity and inclusion", "Board independence", "Sustainability initiatives", "Community impact", "Ethical business practices", "Regulatory compliance"],
     "risk_tolerance": "Medium",
-    "sentiment_triggers": ["pollution", "non-compliance", "labor disputes", "governance issues", "greenwashing"],
-    "tone_preference": "Transparent and values-driven"
+    "sentiment_triggers": ["environmental violations", "diversity issues", "governance scandals", "regulatory fines", "labor disputes", "greenwashing", "board conflicts", "ethics violations", "community backlash", "sustainability failures"],
+    "tone_preference": "Values-driven and transparent",
+    "investment_horizon": "Long-term (5-15 years)",
+    "key_metrics": ["ESG scores", "Carbon intensity", "Board diversity", "Employee satisfaction", "Sustainability metrics"],
+    "typical_concerns": ["Are they genuinely sustainable?", "How diverse is leadership?", "Are they transparent about challenges?", "Do they have strong governance?"]
   },
   {
     "name": "Quant Quentin",
-    "bio": "A data-driven quapip install streamlit openai nltk pymupdfnt who trades based on financial metrics, trends, and signals.",
-    "investment_style": "Algorithmic and factor investing",
-    "focus_areas": ["EBITDA", "Margins", "ROE", "P/E ratios", "Revenue trends", "Guidance vs performance"],
-    "risk_tolerance": "Neutral",
-    "sentiment_triggers": ["unexpected deviation", "metrics below benchmark", "non-GAAP inconsistencies"],
-    "tone_preference": "Precise, analytical"
+    "bio": "A 29-year-old quantitative analyst using algorithmic trading strategies. Focuses on statistical patterns, financial ratios, and data-driven investment decisions. Emotionally detached from individual companies.",
+    "investment_style": "Quantitative and factor investing",
+    "focus_areas": ["Financial ratios", "Statistical trends", "Earnings quality", "Cash flow patterns", "Valuation metrics", "Risk-adjusted returns", "Factor exposures"],
+    "risk_tolerance": "Medium",
+    "sentiment_triggers": ["accounting irregularities", "non-GAAP inconsistencies", "guidance volatility", "metric deterioration", "statistical outliers", "model breakdown", "factor underperformance", "unexpected variance"],
+    "tone_preference": "Data-driven and analytical",
+    "investment_horizon": "Short to medium-term (6 months - 3 years)",
+    "key_metrics": ["P/E ratio", "EV/EBITDA", "ROE", "ROA", "Free cash flow yield", "Earnings quality score"],
+    "typical_concerns": ["Do the numbers add up?", "Are trends consistent?", "Is the valuation justified?", "Are there statistical red flags?"]
   },
   {
     "name": "Retail Ryan",
-    "bio": "A casual investor influenced by news, social media trends, and brand sentiment.",
-    "investment_style": "Sentiment and hype-based investing",
-    "focus_areas": ["Brand image", "Consumer perception", "Media buzz", "CEO reputation"],
+    "bio": "A 28-year-old individual investor who follows financial news, social media, and online forums. Makes decisions based on brand sentiment, news flow, and popular opinion. Influenced by analyst recommendations.",
+    "investment_style": "Sentiment and news-driven investing",
+    "focus_areas": ["Brand reputation", "Media coverage", "Social sentiment", "Analyst ratings", "CEO leadership", "Customer satisfaction", "Market buzz", "Viral trends"],
     "risk_tolerance": "High",
-    "sentiment_triggers": ["negative press", "viral controversy", "bad customer experience", "brand backlash"],
-    "tone_preference": "Relatable and confident"
+    "sentiment_triggers": ["negative headlines", "CEO scandals", "product failures", "customer complaints", "viral backlash", "analyst downgrades", "earnings misses", "bad press", "social media criticism", "boycotts"],
+    "tone_preference": "Accessible and relatable",
+    "investment_horizon": "Short-term (3 months - 2 years)",
+    "key_metrics": ["Stock price momentum", "Social media sentiment", "News sentiment", "Analyst ratings", "Brand perception"],
+    "typical_concerns": ["What are people saying online?", "Will this go viral?", "Are analysts bullish?", "Is the brand strong?"]
+  },
+  {
+    "name": "Value Victor",
+    "bio": "A 52-year-old value investor inspired by Benjamin Graham and Warren Buffett. Seeks undervalued companies with strong fundamentals, patient capital appreciation, and margin of safety.",
+    "investment_style": "Deep value investing",
+    "focus_areas": ["Intrinsic value", "Book value", "Asset quality", "Competitive moats", "Management quality", "Free cash flow", "Margin of safety"],
+    "risk_tolerance": "Low to Medium",
+    "sentiment_triggers": ["overvaluation", "accounting concerns", "management changes", "competitive threats", "asset impairments", "goodwill writedowns", "pension obligations", "hidden liabilities"],
+    "tone_preference": "Patient and fundamental-focused",
+    "investment_horizon": "Very long-term (10+ years)",
+    "key_metrics": ["P/B ratio", "P/E ratio", "EV/EBITDA", "Free cash flow", "ROIC", "Debt/Equity"],
+    "typical_concerns": ["Is this truly undervalued?", "Are assets real?", "Is management trustworthy?", "What's the margin of safety?"]
   }
 ]
