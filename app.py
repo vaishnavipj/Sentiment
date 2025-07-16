@@ -142,7 +142,7 @@ def calculate_risk(finbert, llm):
 
 # === Main App ===
 def main():
-    st.markdown("<div class='main-title'>📑 Unified Sentiment Analysis - Brand Name</div>", unsafe_allow_html=True)
+        st.markdown("<div class='main-title'>📑 Unified Sentiment Analysis - Brand Name</div>", unsafe_allow_html=True)
     uploaded = st.file_uploader("📤 Upload Annual Report (PDF/DOCX/TXT)", type=["pdf", "docx", "txt"])
 
     if uploaded:
@@ -155,63 +155,127 @@ def main():
 
         tab1, tab2, tab3 = st.tabs(["🧠 Investor Sentiment", "📋 Compliance Check", "🔁 Redundancy"])
 
+        # --- TAB 1: INVESTOR SENTIMENT ---
         with tab1:
-            st.markdown("<div class='sub-section'>Sentiment analysis - Persona Based</div>", unsafe_allow_html=True)
-            selected = st.multiselect("🎯 Select Personas", [p['name'] for p in personas], default=[p['name'] for p in personas])
-            show_all = st.checkbox("Show all sentences (not just risky ones)", value=False)
+            subtab1, subtab2 = st.tabs(["📄 Sentence-based", "📚 Topic-based"])
 
-            if st.button("▶️ Run Investor Sentiment Analysis"):
-                selected_personas = [p for p in personas if p['name'] in selected]
-                if not selected_personas:
-                    st.warning("⚠️ Please select at least one persona.")
-                else:
-                    progress = st.progress(0.0)
-                    for i, persona in enumerate(selected_personas):
-                        st.markdown(f"<div class='highlight'>👤 <strong>{persona['name']}</strong></div>", unsafe_allow_html=True)
-                        st.markdown(f"🧬 <i>{persona['bio']}</i>", unsafe_allow_html=True)
-                        st.markdown(f"🔎 <strong>Investment Style:</strong> {persona['investment_style']}  \n📌 <strong>Focus Areas:</strong> {', '.join(persona['focus_areas'])}", unsafe_allow_html=True)
+            # === SUBTAB 1: Sentence-Based ===
+            with subtab1:
+                st.markdown("<div class='sub-section'>Sentiment analysis - Persona Based</div>", unsafe_allow_html=True)
+                selected = st.multiselect("🎯 Select Personas", [p['name'] for p in personas], default=[p['name'] for p in personas])
+                show_all = st.checkbox("Show all sentences (not just risky ones)", value=False)
 
-                        low, med, high = 0, 0, 0
+                if st.button("▶️ Run Sentence-Based Sentiment Analysis"):
+                    selected_personas = [p for p in personas if p['name'] in selected]
+                    if not selected_personas:
+                        st.warning("⚠️ Please select at least one persona.")
+                    else:
+                        progress = st.progress(0.0)
+                        for i, persona in enumerate(selected_personas):
+                            st.markdown(f"<div class='highlight'>👤 <strong>{persona['name']}</strong></div>", unsafe_allow_html=True)
+                            st.markdown(f"🧬 <i>{persona['bio']}</i>", unsafe_allow_html=True)
+                            st.markdown(f"🔎 <strong>Investment Style:</strong> {persona['investment_style']}  \n📌 <strong>Focus Areas:</strong> {', '.join(persona['focus_areas'])}", unsafe_allow_html=True)
 
-                        for sent in sentences[:20]:  # You can increase for full document
-                            finbert = get_finbert_sentiment(sent, finbert_tokenizer, model)
-                            llm_result = get_llm_sentiment(persona, sent, finbert)
+                            low, med, high = 0, 0, 0
 
-                            risk_level = llm_result.get("risk_level", "Medium").capitalize()
-                            if risk_level == "High":
-                                high += 1
-                            elif risk_level == "Low":
-                                low += 1
-                            else:
-                                med += 1
+                            for sent in sentences[:20]:
+                                finbert = get_finbert_sentiment(sent, finbert_tokenizer, model)
+                                llm_result = get_llm_sentiment(persona, sent, finbert)
+                                risk_level = llm_result.get("risk_level", "Medium").capitalize()
+                                if risk_level == "High": high += 1
+                                elif risk_level == "Low": low += 1
+                                else: med += 1
 
-                            if show_all or risk_level in ["High", "Medium"]:
-                                with st.expander(f"💬 Sentence Review – {persona['name']}"):
-                                    st.markdown(f"**📝 Sentence:** {sent}")
+                                if show_all or risk_level in ["High", "Medium"]:
+                                    with st.expander(f"💬 Sentence Review –"):
+                                        st.markdown(f"**📝 Sentence:** {sent}")
+                                        st.markdown(f"**📊 Risk Probability for {persona['name']}:**")
+                                        finbert_df = pd.DataFrame([finbert]).T.rename(columns={0: "Probability"})
+                                        finbert_df["Probability"] = (finbert_df["Probability"] * 100).round(2).astype(str) + " %"
+                                        st.dataframe(finbert_df, use_container_width=True)
 
-                                    st.markdown(f"**📊 Risk Probability for {persona['name']}:**")
-                                    finbert_df = pd.DataFrame([finbert]).T.rename(columns={0: "Probability"})
-                                    finbert_df["Probability"] = (finbert_df["Probability"] * 100).round(2).astype(str) + " %"
-                                    st.dataframe(finbert_df, use_container_width=True)
+                                        st.markdown("🧠 <strong>Persona’s Interpretation:</strong>", unsafe_allow_html=True)
+                                        st.markdown(f"<div class='sub-section'>{llm_result.get('viewpoint', 'N/A')}</div>", unsafe_allow_html=True)
 
-                                    st.markdown("🧠 <strong>Persona’s Interpretation:</strong>", unsafe_allow_html=True)
-                                    st.markdown(f"<div class='sub-section'>{llm_result.get('viewpoint', 'N/A')}</div>", unsafe_allow_html=True)
+                                        st.markdown("📌 <strong>Why this matters to the persona:</strong>", unsafe_allow_html=True)
+                                        st.info(llm_result.get("rationale", "No rationale provided."))
 
-                                    # st.markdown(f"⚠️ <strong>Risk Level as seen by {persona['name']}:</strong> `{risk_level}`", unsafe_allow_html=True)
+                            chart_df = pd.DataFrame({"Risk Level": ["Low", "Medium", "High"], "Count": [low, med, high]})
+                            fig = go.Figure(data=[go.Bar(x=chart_df["Risk Level"], y=chart_df["Count"], marker_color=["green", "orange", "red"])])
+                            fig.update_layout(title="📈 Risk Distribution Across Sentences", xaxis_title="Risk Level", yaxis_title="Count")
+                            st.plotly_chart(fig, use_container_width=True)
+                            progress.progress((i + 1) / len(selected_personas))
 
-                                    st.markdown("📌 <strong>Why this matters to the persona:</strong>", unsafe_allow_html=True)
-                                    st.info(llm_result.get("rationale", "No rationale provided."))
+            # === SUBTAB 2: Topic-Based ===
+            with subtab2:
+                selected_personas = st.multiselect("🎯 Select Personas for Topic Analysis", [p['name'] for p in personas], default=[p['name'] for p in personas])
 
-                        chart_df = pd.DataFrame({
-                            "Risk Level": ["Low", "Medium", "High"],
-                            "Count": [low, med, high]
-                        })
-                        fig = go.Figure(data=[go.Bar(x=chart_df["Risk Level"], y=chart_df["Count"],
-                                                     marker_color=["green", "orange", "red"])])
-                        fig.update_layout(title="📈 Risk Distribution Across Sentences")
-                        st.plotly_chart(fig, use_container_width=True)
+                if st.button("▶️ Run Topic-Based Sentiment Analysis"):
+                    with st.spinner("🔍 Extracting topics and analyzing risks..."):
+                        try:
+                            topic_prompt = f"""
+Given the annual report content below, extract 5–7 distinct strategic or operational topics.
 
-                        progress.progress((i + 1) / len(selected_personas))
+For each topic, return:
+- "topic": Title of the topic
+- "summary": What this topic is about
+- "focus_area": One word: Profitability, Risk, Growth, Governance, Compliance, Innovation, etc.
+- "top_sentences": 3 most critical sentences that reflect risk or performance concerns
+
+Only return a JSON array with the format:
+[
+  {{"topic": "...", "summary": "...", "focus_area": "...", "top_sentences": ["...", "...", "..."]}},
+  ...
+]
+Text: \n{text[:4000]}
+"""
+                            response = openai.chat.completions.create(
+                                model="gpt-4o",
+                                messages=[{"role": "user", "content": topic_prompt}],
+                                temperature=0.3,
+                                max_tokens=1200
+                            )
+                            topic_json = json.loads(re.search(r"\[.*\]", response.choices[0].message.content, re.DOTALL).group(0))
+                        except Exception as e:
+                            st.error(f"❌ Error extracting topics: {str(e)}")
+                            return
+
+                        for persona in [p for p in personas if p['name'] in selected_personas]:
+                            st.markdown(f"<div class='highlight'>👤 <strong>{persona['name']}</strong></div>", unsafe_allow_html=True)
+                            for topic in topic_json:
+                                st.markdown(f"### 🧩 Topic: {topic['topic']}")
+                                st.markdown(f"**🔍 Summary:** {topic['summary']}")
+                                st.markdown(f"**📌 Focus Area:** `{topic['focus_area']}`")
+
+                                topic_text = " ".join(topic['top_sentences'])
+                                finbert = get_finbert_sentiment(topic_text, finbert_tokenizer, model)
+                                llm_result = get_llm_sentiment(persona, topic_text, finbert)
+
+                                st.markdown("📊 **Probability Breakdown:**")
+                                score_df = pd.DataFrame([finbert]).T.rename(columns={0: "Probability"})
+                                score_df["Probability"] = (score_df["Probability"] * 100).round(2).astype(str) + "%"
+                                st.dataframe(score_df, use_container_width=True)
+
+                                st.markdown("📌 <strong>Why this section matters to the persona:</strong>", unsafe_allow_html=True)
+                                st.info(llm_result.get("rationale", "No rationale provided."))
+
+                                st.markdown("🧠 <strong>Persona’s Interpretation:</strong>", unsafe_allow_html=True)
+                                st.markdown(f"<div class='sub-section'>{llm_result.get('viewpoint', 'N/A')}</div>", unsafe_allow_html=True)
+
+                                st.markdown("### 📊 Top Contributing Sentences")
+                                for i, sent in enumerate(topic['top_sentences']):
+                                    st.markdown(f"{i+1}. {sent}")
+
+                                fig = go.Figure(data=[
+                                    go.Bar(x=list(finbert.keys()), y=[v * 100 for v in finbert.values()], marker_color=["red", "orange", "green"])
+                                ])
+                                fig.update_layout(
+                                    title=f"🎯 Risk Sentiment Distribution for Topic: {topic['topic']}",
+                                    xaxis_title="Sentiment", yaxis_title="Probability (%)",
+                                    yaxis=dict(range=[0, 100])
+                                )
+                                st.plotly_chart(fig, use_container_width=True)
+
                 # --- Tab 2: Compliance Check ---
         with tab2:
             st.markdown("<div class='sub-section'>📋 Compliance report against SEBI & Companies Act</div>", unsafe_allow_html=True)
