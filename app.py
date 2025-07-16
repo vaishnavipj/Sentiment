@@ -75,20 +75,29 @@ def extract_text(uploaded_file):
 # === Sentiment Functions ===
 def generate_prompt(persona, sentence):
     return f"""
-You are {persona['name']}, an investor with the following focus areas: {', '.join(persona['focus_areas'])}.
+You are {persona['name']}, a financial investor known for your {persona['investment_style']} approach.
 
-Evaluate the following sentence from a company’s annual report:
+Please evaluate this excerpt from a company’s annual report:
 \"\"\"{sentence}\"\"\"
 
-Return your analysis in this **JSON** format:
+### Your Background:
+- 🧬 Risk Tolerance: {persona['risk_tolerance']}
+- 🎯 Focus Areas: {', '.join(persona['focus_areas'])}
+- 🧠 Typical Concerns: {', '.join(persona['typical_concerns'])}
+- ✨ Preferred Tone: {persona['tone_preference']}
+
+### Your Task:
+Analyze the sentence strictly from your perspective as {persona['name']}, in your tone. Focus on what this sentence implies for your investment philosophy and decision-making.
+
+Reply in this **JSON** format only:
 
 {{
-  "viewpoint": "Your perspective as an investor, including interpretation, concerns, or positive takeaways.",
-  "risk_level": "High / Medium / Low",
-  "rationale": "Why you rated it as this risk level, in simple language."
+  "viewpoint": "Describe your interpretation and perspective in your tone.",
+  "risk_level": "High / Medium / Low — how concerning this is to you.",
+  "rationale": "Brief but clear justification in your tone for why you see it that way."
 }}
 
-Only return the JSON. Do not explain what you're doing.
+Only return the JSON. No explanation, no commentary.
 """
 
 def get_llm_sentiment(persona, sentence):
@@ -119,7 +128,7 @@ def calculate_risk(finbert, llm):
 
 # === MAIN App ===
 def main():
-    st.markdown("<div class='main-title'>📑 Sentiment Analysis - Brand Name</div>", unsafe_allow_html=True)
+    st.markdown("<div class='main-title'>📑 Sentiment Analysis – Investor Personas</div>", unsafe_allow_html=True)
     uploaded = st.file_uploader("📤 Upload Annual Report (PDF/DOCX/TXT)", type=["pdf", "docx", "txt"])
 
     if uploaded:
@@ -129,14 +138,11 @@ def main():
         sentences = sentence_tokenizer.tokenize(text)
         personas = load_personas()
         finbert_tokenizer, model = load_finbert()
-     
 
-        tab1, tab2, tab3 = st.tabs(["🧠 Investor Sentiment", "📋 Compliance Check", "🔁 Redundancy"])
+        tab1, _, _ = st.tabs(["🧠 Investor Sentiment", "📋 Compliance Check", "🔁 Redundancy"])
 
-        # --- Tab 1: Investor Sentiment ---
-                # === Tab 1: Investor Sentiment ===
         with tab1:
-            st.markdown("<div class='sub-section'>Sentiment analysis from investor personas</div>", unsafe_allow_html=True)
+            st.markdown("<div class='sub-section'>Sentiment analysis using selected investor personas</div>", unsafe_allow_html=True)
             selected = st.multiselect("🎯 Select Personas", [p['name'] for p in personas], default=[p['name'] for p in personas])
             show_all = st.checkbox("Show all sentences (not just risky ones)", value=False)
 
@@ -147,15 +153,16 @@ def main():
                 else:
                     progress = st.progress(0.0)
                     for i, persona in enumerate(selected_personas):
-                        st.markdown(f"<div class='highlight'>👤 {persona['name']} | Focus: {', '.join(persona['focus_areas'])}</div>", unsafe_allow_html=True)
+                        st.markdown(f"<div class='highlight'>👤 <strong>{persona['name']}</strong></div>", unsafe_allow_html=True)
+                        st.markdown(f"🧬 <i>{persona['bio']}</i>", unsafe_allow_html=True)
+                        st.markdown(f"🔎 <strong>Investment Style:</strong> {persona['investment_style']}  \n📌 <strong>Focus Areas:</strong> {', '.join(persona['focus_areas'])}", unsafe_allow_html=True)
+
                         low, med, high = 0, 0, 0
 
                         for sent in sentences[:10]:
-                            # Get GPT analysis and FinBERT sentiment
                             llm_result = get_llm_sentiment(persona, sent)
                             finbert = get_finbert_sentiment(sent, finbert_tokenizer, model)
 
-                            # Count risk levels
                             risk_level = llm_result.get("risk_level", "Medium").capitalize()
                             if risk_level == "High":
                                 high += 1
@@ -164,30 +171,22 @@ def main():
                             else:
                                 med += 1
 
-                            # Show if risky or all selected
                             if show_all or risk_level in ["High", "Medium"]:
                                 with st.expander(f"💬 Sentence Review – {persona['name']}"):
-                                    # Full sentence
                                     st.markdown(f"**📝 Sentence:** {sent}")
 
-                                    # FinBERT-like sentiment breakdown
                                     st.markdown("**📊 Tone Probability Breakdown:**")
                                     finbert_df = pd.DataFrame([finbert]).T.rename(columns={0: "Probability"})
                                     finbert_df["Probability"] = (finbert_df["Probability"] * 100).round(2).astype(str) + " %"
                                     st.dataframe(finbert_df, use_container_width=True)
 
-                                    # Persona Viewpoint
-                                    st.markdown("**🧠 Persona Viewpoint:**")
-                                    st.markdown(f"<div class='sub-section'>{llm_result.get('viewpoint', '')}</div>", unsafe_allow_html=True)
+                                    st.markdown("🧠 <strong>Persona’s Interpretation:</strong>", unsafe_allow_html=True)
+                                    st.markdown(f"<div class='sub-section'>{llm_result.get('viewpoint', 'N/A')}</div>", unsafe_allow_html=True)
 
-                                    # Risk Level
-                                    st.markdown(f"**⚠️ Risk Level:** `{risk_level}`")
-
-                                    # Rationale
-                                    st.markdown("**📌 Rationale:**")
+                                    st.markdown(f"⚠️ <strong>Risk Level:</strong> `{risk_level}`", unsafe_allow_html=True)
+                                    st.markdown("📌 <strong>Why this matters to the persona:</strong>", unsafe_allow_html=True)
                                     st.info(llm_result.get("rationale", "No rationale provided."))
 
-                        # Sentiment Summary Chart
                         chart_df = pd.DataFrame({
                             "Risk Level": ["Low", "Medium", "High"],
                             "Count": [low, med, high]
@@ -198,7 +197,6 @@ def main():
                         st.plotly_chart(fig, use_container_width=True)
 
                         progress.progress((i + 1) / len(selected_personas))
-       
                 # --- Tab 2: Compliance Check ---
         with tab2:
             st.markdown("<div class='sub-section'>📋 Compliance report against SEBI & Companies Act</div>", unsafe_allow_html=True)
