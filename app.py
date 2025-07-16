@@ -139,7 +139,7 @@ def main():
         personas = load_personas()
         finbert_tokenizer, model = load_finbert()
 
-        tab1, _, _ = st.tabs(["🧠 Investor Sentiment", "📋 Compliance Check", "🔁 Redundancy"])
+        tab1, tab2, tab3 = st.tabs(["🧠 Investor Sentiment", "📋 Compliance Check", "🔁 Redundancy"])
 
         with tab1:
             st.markdown("<div class='sub-section'>Sentiment analysis using selected investor personas</div>", unsafe_allow_html=True)
