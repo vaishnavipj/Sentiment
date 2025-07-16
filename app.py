@@ -75,29 +75,24 @@ def extract_text(uploaded_file):
 # === Sentiment Functions ===
 def generate_prompt(persona, sentence):
     return f"""
-You are {persona['name']}, a financial investor known for your {persona['investment_style']} approach.
+You are a financial analyst acting as an investor named **{persona['name']}**. Assess the following financial statement from your investment viewpoint.
 
-Please evaluate this excerpt from a company’s annual report:
+Sentence:
 \"\"\"{sentence}\"\"\"
 
-### Your Background:
-- 🧬 Risk Tolerance: {persona['risk_tolerance']}
-- 🎯 Focus Areas: {', '.join(persona['focus_areas'])}
-- 🧠 Typical Concerns: {', '.join(persona['typical_concerns'])}
-- ✨ Preferred Tone: {persona['tone_preference']}
+Persona Background:
+- Risk Tolerance: {persona['risk_tolerance']}
+- Investment Style: {persona['investment_style']}
+- Focus Areas: {', '.join(persona['focus_areas'])}
+- Typical Concerns: {', '.join(persona['typical_concerns'])}
 
-### Your Task:
-Analyze the sentence strictly from your perspective as {persona['name']}, in your tone. Focus on what this sentence implies for your investment philosophy and decision-making.
-
-Reply in this **JSON** format only:
+Respond only in the following strict JSON format:
 
 {{
-  "viewpoint": "Describe your interpretation and perspective in your tone.",
-  "risk_level": "High / Medium / Low — how concerning this is to you.",
-  "rationale": "Brief but clear justification in your tone for why you see it that way."
+  "viewpoint": "Your unique interpretation based on persona background.",
+  "risk_level": "High / Medium / Low — your investment risk perception.",
+  "rationale": "Simple, concise justification from the investor’s lens."
 }}
-
-Only return the JSON. No explanation, no commentary.
 """
 
 def get_llm_sentiment(persona, sentence):
@@ -110,9 +105,20 @@ def get_llm_sentiment(persona, sentence):
         )
         raw = response.choices[0].message.content
         match = re.search(r"\{.*\}", raw, re.DOTALL)
-        return json.loads(match.group(0)) if match else {"viewpoint": "", "risk_level": "Medium", "rationale": "Could not parse."}
+        if not match:
+            raise ValueError("No valid JSON found.")
+        result = json.loads(match.group(0))
+        return {
+            "viewpoint": result.get("viewpoint", "Missing viewpoint"),
+            "risk_level": result.get("risk_level", "Medium"),
+            "rationale": result.get("rationale", "No rationale provided.")
+        }
     except Exception as e:
-        return {"viewpoint": "Error generating response", "risk_level": "Medium", "rationale": str(e)}
+        return {
+            "viewpoint": "❌ Error generating response from LLM.",
+            "risk_level": "Medium",
+            "rationale": f"LLM error: {str(e)}"
+        }
 
 def get_finbert_sentiment(text, tokenizer, model):
     inputs = tokenizer(text, return_tensors="pt", truncation=True, max_length=512)
@@ -126,23 +132,24 @@ def calculate_risk(finbert, llm):
     penalty = 0.4 if "negative" in llm.lower() else 0
     return round(min(finbert['negative'] + penalty, 1.0), 2)
 
-# === MAIN App ===
+# === Main App ===
 def main():
-    st.markdown("<div class='main-title'>📑 Sentiment Analysis – Investor Personas</div>", unsafe_allow_html=True)
+    st.markdown("<div class='main-title'>📑 Persona-Aligned Sentiment Analyzer</div>", unsafe_allow_html=True)
     uploaded = st.file_uploader("📤 Upload Annual Report (PDF/DOCX/TXT)", type=["pdf", "docx", "txt"])
 
     if uploaded:
         text = extract_text(uploaded)
         st.success("✅ File Uploaded & Extracted")
         sentence_tokenizer = ensure_punkt_tokenizer()
-        sentences = sentence_tokenizer.tokenize(text)
+        raw_sentences = sentence_tokenizer.tokenize(text)
+        sentences = [s for s in raw_sentences if len(s.split()) > 5]  # Filter short junk
         personas = load_personas()
         finbert_tokenizer, model = load_finbert()
 
         tab1, tab2, tab3 = st.tabs(["🧠 Investor Sentiment", "📋 Compliance Check", "🔁 Redundancy"])
 
         with tab1:
-            st.markdown("<div class='sub-section'>Sentiment analysis using selected investor personas</div>", unsafe_allow_html=True)
+            st.markdown("<div class='sub-section'>Sentiment analysis from investor personas</div>", unsafe_allow_html=True)
             selected = st.multiselect("🎯 Select Personas", [p['name'] for p in personas], default=[p['name'] for p in personas])
             show_all = st.checkbox("Show all sentences (not just risky ones)", value=False)
 
@@ -159,7 +166,7 @@ def main():
 
                         low, med, high = 0, 0, 0
 
-                        for sent in sentences[:10]:
+                        for sent in sentences[:10]:  # Adjust this to control speed
                             llm_result = get_llm_sentiment(persona, sent)
                             finbert = get_finbert_sentiment(sent, finbert_tokenizer, model)
 
@@ -181,11 +188,15 @@ def main():
                                     st.dataframe(finbert_df, use_container_width=True)
 
                                     st.markdown("🧠 <strong>Persona’s Interpretation:</strong>", unsafe_allow_html=True)
-                                    st.markdown(f"<div class='sub-section'>{llm_result.get('viewpoint', 'N/A')}</div>", unsafe_allow_html=True)
+                                    st.markdown(f"<div class='sub-section'>{llm_result.get('viewpoint', '')}</div>", unsafe_allow_html=True)
 
-                                    st.markdown(f"⚠️ <strong>Risk Level:</strong> `{risk_level}`", unsafe_allow_html=True)
+                                    st.markdown(f"⚠️ <strong>Risk Level as seen by {persona['name']}:</strong> `{risk_level}`", unsafe_allow_html=True)
+
+                                    rationale_text = llm_result.get("rationale", "No rationale provided.")
+                                    if not isinstance(rationale_text, str):
+                                        rationale_text = str(rationale_text)
                                     st.markdown("📌 <strong>Why this matters to the persona:</strong>", unsafe_allow_html=True)
-                                    st.info(llm_result.get("rationale", "No rationale provided."))
+                                    st.info(rationale_text)
 
                         chart_df = pd.DataFrame({
                             "Risk Level": ["Low", "Medium", "High"],
