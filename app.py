@@ -157,8 +157,7 @@ def main():
 
         # --- TAB 1: INVESTOR SENTIMENT ---
         with tab1:
-            subtab1, subtab2 = st.tabs(["📄 Sentence-based", "📚 Topic-based"])
-
+            subtab1, subtab2, subtab3 = st.tabs(["📄 Sentence-based", "📚 Topic-based", "📊 Overall Sentiment"])
             # === SUBTAB 1: Sentence-Based ===
             with subtab1:
                 # st.markdown("<div class='sub-section'>Sentiment analysis - Persona Based</div>", unsafe_allow_html=True)
