@@ -109,7 +109,7 @@ def get_llm_sentiment(persona, sentence, finbert_scores):
         response = openai.chat.completions.create(
             model="gpt-4o",
             messages=[{"role": "user", "content": prompt}],
-            temperature=0.4,
+            temperature=0.5,
             max_tokens=600
         )
         raw = response.choices[0].message.content
@@ -142,7 +142,7 @@ def calculate_risk(finbert, llm):
 
 # === Main App ===
 def main():
-    st.markdown("<div class='main-title'>📑 Sentiment Analysis - Investor Personas</div>", unsafe_allow_html=True)
+    st.markdown("<div class='main-title'>📑 Unified Sentiment Analysis - Brand Name</div>", unsafe_allow_html=True)
     uploaded = st.file_uploader("📤 Upload Annual Report (PDF/DOCX/TXT)", type=["pdf", "docx", "txt"])
 
     if uploaded:
@@ -156,7 +156,7 @@ def main():
         tab1, tab2, tab3 = st.tabs(["🧠 Investor Sentiment", "📋 Compliance Check", "🔁 Redundancy"])
 
         with tab1:
-            st.markdown("<div class='sub-section'>Sentiment analysis - Brand Name</div>", unsafe_allow_html=True)
+            st.markdown("<div class='sub-section'>Sentiment analysis - Persona Based</div>", unsafe_allow_html=True)
             selected = st.multiselect("🎯 Select Personas", [p['name'] for p in personas], default=[p['name'] for p in personas])
             show_all = st.checkbox("Show all sentences (not just risky ones)", value=False)
 
@@ -173,7 +173,7 @@ def main():
 
                         low, med, high = 0, 0, 0
 
-                        for sent in sentences[:10]:  # You can increase for full document
+                        for sent in sentences[:20]:  # You can increase for full document
                             finbert = get_finbert_sentiment(sent, finbert_tokenizer, model)
                             llm_result = get_llm_sentiment(persona, sent, finbert)
 
