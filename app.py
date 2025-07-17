@@ -14,11 +14,13 @@ import plotly.graph_objects as go
 
 @st.cache_resource
 def ensure_punkt_tokenizer():
+    import nltk
     try:
         nltk.data.find("tokenizers/punkt")
     except LookupError:
         nltk.download("punkt")
-    from nltk.tokenize import PunktSentenceTokenizer, PunktParameters
+
+    from nltk.tokenize.punkt import PunktSentenceTokenizer, PunktParameters
 
     punkt_params = PunktParameters()
     
@@ -32,10 +34,9 @@ def ensure_punkt_tokenizer():
     ]
 
     punkt_params.abbrev_types = set(abbrevs)
-
     tokenizer = PunktSentenceTokenizer(punkt_params)
     return tokenizer
-
+    
 # === OpenAI Key ===
 openai.api_key = st.secrets["openai"]["api_key"]
 
