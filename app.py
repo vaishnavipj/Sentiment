@@ -536,15 +536,15 @@ Business Responsibility Report,SEBI BRSR Top 1000,Top 1000,"business responsibil
                         "Board’s Report": "https://www.mca.gov.in/Ministry/pdf/CompaniesAct2013.pdf",
                         "Director’s Responsibility Statement": "https://www.mca.gov.in/Ministry/pdf/CompaniesAct2013.pdf",
                         "Financial Highlights": "https://www.mca.gov.in/Ministry/pdf/CompaniesAct2013.pdf",
-                        "Dividend Declaration": "https://www.sebi.gov.in/legal/regulations/jun-2021/sebi-listing-obligations-and-disclosure-requirements-regulations-2015-last-amended-on-june-3-2021-_37269.html",
+                        "Dividend Declaration": "https://caalley.com/gn/68983clcgc55147-gnd3.pdf",
                         "CSR Report": "https://www.mca.gov.in/Ministry/pdf/CompaniesAct2013.pdf",
                         "Secretarial Audit Report": "https://www.mca.gov.in/Ministry/pdf/CompaniesAct2013.pdf",
                         "Statutory Auditor’s Report": "https://www.mca.gov.in/Ministry/pdf/CompaniesAct2013.pdf",
                         "Financial Statements – Standalone": "https://www.mca.gov.in/Ministry/pdf/CompaniesAct2013.pdf",
                         "Notes to Financial Statements": "https://www.mca.gov.in/Ministry/pdf/CompaniesAct2013.pdf",
                         "MD&A": "https://www.sebi.gov.in/legal/regulations/jun-2021/sebi-listing-obligations-and-disclosure-requirements-regulations-2015-last-amended-on-june-3-2021-_37269.html",
-                        "Corporate Governance Report": "https://www.sebi.gov.in/legal/regulations/jun-2021/sebi-listing-obligations-and-disclosure-requirements-regulations-2015-last-amended-on-june-3-2021-_37269.html",
-                        "Business Responsibility Report": "https://www.sebi.gov.in/legal/master-circulars/jul-2025/master-circular-for-listing-obligations-and-disclosure-requirements-for-non-convertible-securities-securitized-debt-instruments-and-or-commercial-paper_95230.html"
+                        "Corporate Governance Report": "https://www.sebi.gov.in/legal/regulations/jul-2024/securities-and-exchange-board-of-india-listing-obligations-and-disclosure-requirements-regulations-2015-last-amended-on-july-10-2024-_84817.html",
+                        "Business Responsibility Report": "https://www.sebi.gov.in/legal/regulations/jul-2024/securities-and-exchange-board-of-india-listing-obligations-and-disclosure-requirements-regulations-2015-last-amended-on-july-10-2024-_84817.html"
                     }
 
                     # Create and display table
