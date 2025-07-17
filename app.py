@@ -18,8 +18,23 @@ def ensure_punkt_tokenizer():
         nltk.data.find("tokenizers/punkt")
     except LookupError:
         nltk.download("punkt")
-    from nltk.tokenize import PunktSentenceTokenizer
-    return PunktSentenceTokenizer()
+    from nltk.tokenize import PunktSentenceTokenizer, PunktParameters
+
+    punkt_params = PunktParameters()
+    
+    abbrevs = [
+        'mr', 'mrs', 'ms', 'dr', 'prof', 'sr', 'jr',
+        'inc', 'ltd', 'co', 'corp', 'llc', 'pvt',
+        'vs', 'etc', 'e.g', 'i.e', 'viz', 'al', 'fig',
+        'jan', 'feb', 'mar', 'apr', 'jun', 'jul', 'aug',
+        'sep', 'sept', 'oct', 'nov', 'dec', 'nos', 'vol', 'rev', 'ed',
+        'st', 'no', 'dept'
+    ]
+
+    punkt_params.abbrev_types = set(abbrevs)
+
+    tokenizer = PunktSentenceTokenizer(punkt_params)
+    return tokenizer
 
 # === OpenAI Key ===
 openai.api_key = st.secrets["openai"]["api_key"]
