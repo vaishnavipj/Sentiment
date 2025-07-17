@@ -528,6 +528,38 @@ Business Responsibility Report,SEBI BRSR Top 1000,Top 1000,"business responsibil
                     for item in missing_sections:
                         st.error(f"❌ {item}")
 
+                    # Add reference table for missing sections
+                    st.markdown("### 📚 Regulatory References for Missing Sections")
+
+                    # Mapping sections to regulatory links
+                    reference_links = {
+                        "Board’s Report": "https://www.mca.gov.in/Ministry/pdf/CompaniesAct2013.pdf",
+                        "Director’s Responsibility Statement": "https://www.mca.gov.in/Ministry/pdf/CompaniesAct2013.pdf",
+                        "Financial Highlights": "https://www.mca.gov.in/Ministry/pdf/CompaniesAct2013.pdf",
+                        "Dividend Declaration": "https://www.sebi.gov.in/legal/regulations/jun-2021/sebi-listing-obligations-and-disclosure-requirements-regulations-2015-last-amended-on-june-3-2021-_37269.html",
+                        "CSR Report": "https://www.mca.gov.in/Ministry/pdf/CompaniesAct2013.pdf",
+                        "Secretarial Audit Report": "https://www.mca.gov.in/Ministry/pdf/CompaniesAct2013.pdf",
+                        "Statutory Auditor’s Report": "https://www.mca.gov.in/Ministry/pdf/CompaniesAct2013.pdf",
+                        "Financial Statements – Standalone": "https://www.mca.gov.in/Ministry/pdf/CompaniesAct2013.pdf",
+                        "Notes to Financial Statements": "https://www.mca.gov.in/Ministry/pdf/CompaniesAct2013.pdf",
+                        "MD&A": "https://www.sebi.gov.in/legal/regulations/jun-2021/sebi-listing-obligations-and-disclosure-requirements-regulations-2015-last-amended-on-june-3-2021-_37269.html",
+                        "Corporate Governance Report": "https://www.sebi.gov.in/legal/regulations/jun-2021/sebi-listing-obligations-and-disclosure-requirements-regulations-2015-last-amended-on-june-3-2021-_37269.html",
+                        "Business Responsibility Report": "https://www.sebi.gov.in/legal/master-circulars/jul-2025/master-circular-for-listing-obligations-and-disclosure-requirements-for-non-convertible-securities-securitized-debt-instruments-and-or-commercial-paper_95230.html"
+                    }
+
+                    # Create and display table
+                    ref_table = "| Missing Section | Regulatory Reference |\n"
+                    ref_table += "|------------------|-----------------------|\n"
+                    for section in missing_sections:
+                        link = reference_links.get(section, "https://caalley.com/gn/68983clcgc55147-gnd3.pdf")
+                        ref_table += f"| {section} | [View Reference]({link}) |\n"
+
+                    st.markdown(ref_table, unsafe_allow_html=True)
+                # if missing_sections:
+                #     st.markdown("### 🔴 Summary of Missing Sections:")
+                #     for item in missing_sections:
+                #         st.error(f"❌ {item}")
+
         # === TAB 3: Redundancy Detection ===
         with tab3:
             st.markdown("<div class='sub-section'>🔁 Redundancy Detector & Section Rewrites</div>", unsafe_allow_html=True)
