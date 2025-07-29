@@ -330,11 +330,17 @@ Thoroughly analyze the uploaded report content and persona profiles to:
 ---
 
 ## 📦 OUTPUT FORMAT GUIDELINES:
- Your output  should be only in valid Markdown syntax
-- All summaries must use standard markdown tables with no trailing pipe symbols
-- Do not use bold or emojis inside table headers
-- Use bullet points for non-tabular sections
-- Avoid long paragraphs — use structured entries
+Please format your response using **clean, valid Markdown** that renders well in Streamlit. Follow these rules:
+
+- Use bullet points (`-`) for non-tabular sections (like narrative tone or summaries).
+- Use standard Markdown tables:
+  - Do **not** include trailing pipe symbols (`|`) after the last column.
+  - Table headers should **not** contain emojis or bold text.
+- Do **not use triple backticks** (```), as they create large code blocks.
+- Avoid indenting any markdown content — keep everything left-aligned.
+- Use headers like `### Section Title` to structure your response clearly.
+- Keep lists and paragraphs short and scannable — avoid dense text blocks.
+- Separate each section with a single blank line for clarity.
 
 ---
 
@@ -432,7 +438,7 @@ List confidence (High / Medium / Low) for each persona.
 **Investor Persona Profiles:**
 {persona_summary}
 ---
-Please return the full response in markdown table and bullet format neatly represented in the streamlit app.
+Please return the full response in markdown table and bullet format only.
 """
                             response = openai.chat.completions.create(
                                 model="gpt-4o",
