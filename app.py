@@ -330,12 +330,11 @@ Thoroughly analyze the uploaded report content and persona profiles to:
 ---
 
 ## 📦 OUTPUT FORMAT GUIDELINES:
-Your output **must strictly follow** the markdown structure provided below.
-- Use **markdown tables** for summaries.
-- Use bullet points where specified.
-- Use emojis for section titles as indicated.
-- Ensure all table columns are filled; use concise yet specific phrases.
-- Do not generate long text blocks — use structured outputs only.
+ Your output  should be only in valid Markdown syntax
+- All summaries must use standard markdown tables with no trailing pipe symbols
+- Do not use bold or emojis inside table headers
+- Use bullet points for non-tabular sections
+- Avoid long paragraphs — use structured entries
 
 ---
 
