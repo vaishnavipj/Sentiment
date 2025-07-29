@@ -330,12 +330,11 @@ Thoroughly analyze the uploaded report content and persona profiles to:
 ---
 
 ## 📦 OUTPUT FORMAT GUIDELINES:
-Generate output in clean **GitHub-flavored Markdown** only, for display inside a Streamlit app. 
-- Use **|** to define columns and **---** to separate header rows in all tables.
-- **No line breaks or wrapped text inside table cells.**
-- Keep every cell on a **single line**, even if it's long.
-- **Do not add HTML.** Only pure Markdown.
-- Use emojis for headings (📈, ⚠️, 👥) and follow section structure exactly.
+ Your output  should be only in valid Markdown syntax
+- All summaries must use standard markdown tables with no trailing pipe symbols
+- Do not use bold or emojis inside table headers
+- Use bullet points for non-tabular sections
+- Avoid long paragraphs — use structured entries
 
 ---
 
@@ -441,7 +440,7 @@ Please return the full response in markdown table and bullet format neatly repre
                                 temperature=0.3,
                                 max_tokens=3200
                             )
-                            st.markdown(response.choices[0].message.content)
+                            st.markdown(response.choices[0].message.content, unsafe_allow_html=False)
                         except Exception as e:
                             st.error(f"❌ Error generating executive summary: {str(e)}")                    
 
