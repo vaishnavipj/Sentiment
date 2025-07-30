@@ -517,6 +517,7 @@ Business Responsibility Report,SEBI BRSR Top 1000,Top 1000,"business responsibil
                 return header + divider + rows
 
             if st.button("▶️ Run Compliance Check"):
+                # with st.spinner("Checking Compliance"):
                 df = run_compliance(text)
 
                 # Visual Summary
@@ -640,7 +641,7 @@ Business Responsibility Report,SEBI BRSR Top 1000,Top 1000,"business responsibil
                 return pd.DataFrame(rows)
 
             if st.button("▶️ Run Redundancy Detection"):
-                with st.spinner("🔍 Detecting redundancy using GPT + embeddings..."):
+                with st.spinner("🔍 Detecting redundancy..."):
                     chunks = chunk_by_section(text)
                     df = detect_redundancy(chunks)
 
