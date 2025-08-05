@@ -158,7 +158,7 @@ def calculate_risk(finbert, llm):
 
 # === Main App ===
 def main():
-    st.image("https://raw.githubusercontent.com/vaishnavipj/Sentiment/main/Screenshot%202025-07-17%20004956.png", width=240)
+    st.image("https://raw.githubusercontent.com/vaishnavipj/Sentiment/main/Screenshot%202025-08-05%20145809.png", width=240) 
     # st.markdown("<div class='main-title'>🗣️ VOICEIQ - Intelligence for your corporate voice</div>", unsafe_allow_html=True)
     uploaded = st.file_uploader("📤 Upload Annual Report (PDF/DOCX/TXT)", type=["pdf", "docx", "txt"])
 
@@ -663,3 +663,4 @@ Business Responsibility Report,SEBI BRSR Top 1000,Top 1000,"business responsibil
 # ✅ Run the app
 if __name__ == "__main__":
     main()      
+
